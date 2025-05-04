@@ -519,24 +519,6 @@
                 last: ['Ironheart', 'Stormwind', 'Brightblade', 'Shadowmere', 'Goldleaf', 'Fireborn', 'Frostbeard', 
                       'Swiftarrow', 'Strongarm', 'Wiseheart', 'Silvertongue', 'Blackwood', 'Redmane', 'Whitestone']
             },
-            npc: {
-                occupations: ['Blacksmith', 'Merchant', 'Guard', 'Farmer', 'Scholar', 'Priest', 'Hunter', 'Thief', 'Noble', 
-                              'Minstrel', 'Healer', 'Sailor', 'Innkeeper', 'Alchemist', 'Scribe', 'Mercenary', 'Beggar', 
-                              'Messenger', 'Craftsman', 'Fisher', 'Mage\'s Apprentice', 'Soldier', 'Baker', 'Gambler'],
-                traits: ['Honest', 'Greedy', 'Suspicious', 'Friendly', 'Nervous', 'Proud', 'Secretive', 'Helpful', 
-                        'Aggressive', 'Curious', 'Tired', 'Cheerful', 'Paranoid', 'Ambitious', 'Lazy', 'Brave', 
-                        'Cowardly', 'Wise', 'Foolish', 'Patient', 'Impatient', 'Loyal', 'Deceptive', 'Generous'],
-                appearances: ['Tall', 'Short', 'Scarred', 'Well-dressed', 'Ragged', 'Muscular', 'Thin', 'Elderly', 
-                             'Young', 'Bearded', 'Clean-shaven', 'Tattooed', 'One-eyed', 'Limping', 'Hooded', 
-                             'Armored', 'Cloaked', 'Dirty', 'Perfumed', 'Pale', 'Tanned', 'Hairy', 'Bald'],
-                wants: ['Money', 'Information', 'Protection', 'Revenge', 'Love', 'Power', 'Escape', 'Food', 
-                       'Medicine', 'Justice', 'Recognition', 'Forgiveness', 'A favor', 'To hide', 'To find someone', 
-                       'To warn you', 'To sell something', 'To buy something', 'Help', 'To make a deal'],
-                secrets: ['Is being followed', 'Knows about treasure', 'Is actually nobility', 'Committed a crime', 
-                         'Has magical abilities', 'Works for the enemy', 'Is dying', 'Owes money', 'Is in love', 
-                         'Knows your past', 'Is a spy', 'Has a cursed item', 'Killed someone', 'Is searching for family', 
-                         'Betrayed someone', 'Has a hidden identity', 'Knows a prophecy', 'Is being blackmailed']
-            },
             goals: [
                 'Find the lost artifact of their ancestors',
                 'Avenge their fallen family',
@@ -574,7 +556,43 @@
                 { range: [6, 8], text: 'Yes, but...' },
                 { range: [9, 10], text: 'Yes' },
                 { range: [11, 12], text: 'Yes, and...' }
-            ]
+            ],
+            npc: {
+                occupations: ['Blacksmith', 'Merchant', 'Guard', 'Farmer', 'Scholar', 'Priest', 'Hunter', 'Thief', 'Noble', 
+                              'Minstrel', 'Healer', 'Sailor', 'Innkeeper', 'Alchemist', 'Scribe', 'Mercenary', 'Beggar', 
+                              'Messenger', 'Craftsman', 'Fisher', 'Mage Apprentice', 'Soldier', 'Baker', 'Gambler'],
+                traits: ['Honest', 'Greedy', 'Suspicious', 'Friendly', 'Nervous', 'Proud', 'Secretive', 'Helpful', 
+                        'Aggressive', 'Curious', 'Tired', 'Cheerful', 'Paranoid', 'Ambitious', 'Lazy', 'Brave', 
+                        'Cowardly', 'Wise', 'Foolish', 'Patient', 'Impatient', 'Loyal', 'Deceptive', 'Generous'],
+                appearances: ['Tall', 'Short', 'Scarred', 'Well-dressed', 'Ragged', 'Muscular', 'Thin', 'Elderly', 
+                             'Young', 'Bearded', 'Clean-shaven', 'Tattooed', 'One-eyed', 'Limping', 'Hooded', 
+                             'Armored', 'Cloaked', 'Dirty', 'Perfumed', 'Pale', 'Tanned', 'Hairy', 'Bald'],
+                wants: ['Money', 'Information', 'Protection', 'Revenge', 'Love', 'Power', 'Escape', 'Food', 
+                       'Medicine', 'Justice', 'Recognition', 'Forgiveness', 'A favor', 'To hide', 'To find someone', 
+                       'To warn you', 'To sell something', 'To buy something', 'Help', 'To make a deal'],
+                secrets: ['Is being followed', 'Knows about treasure', 'Is actually nobility', 'Committed a crime', 
+                         'Has magical abilities', 'Works for the enemy', 'Is dying', 'Owes money', 'Is in love', 
+                         'Knows your past', 'Is a spy', 'Has a cursed item', 'Killed someone', 'Is searching for family', 
+                         'Betrayed someone', 'Has a hidden identity', 'Knows a prophecy', 'Is being blackmailed']
+            },
+            details: {
+                senses: ['Ancient', 'Bloody', 'Burning', 'Damp', 'Dusty', 'Echoing', 'Foggy', 'Glowing', 'Humming', 'Icy', 
+                        'Musty', 'Oily', 'Putrid', 'Rustling', 'Shadowy', 'Silent', 'Smoky', 'Sparkling', 'Whispering', 'Windy'],
+                elements: ['Bones', 'Chains', 'Crystals', 'Feathers', 'Flowers', 'Gears', 'Glass', 'Leaves', 'Metal', 'Moss', 
+                          'Mushrooms', 'Paper', 'Roots', 'Runes', 'Sand', 'Silk', 'Stone', 'Thorns', 'Water', 'Wood'],
+                conditions: ['Abandoned', 'Broken', 'Ceremonial', 'Concealed', 'Corrupted', 'Cursed', 'Decorated', 'Forgotten', 
+                            'Fresh', 'Hidden', 'Locked', 'Magical', 'Moving', 'New', 'Old', 'Overgrown', 'Preserved', 'Rotting', 
+                            'Sacred', 'Valuable'],
+                purposes: ['Battle', 'Celebration', 'Communication', 'Containment', 'Craft', 'Defense', 'Execution', 'Healing', 
+                          'Knowledge', 'Navigation', 'Offering', 'Prison', 'Protection', 'Punishment', 'Rest', 'Ritual', 
+                          'Storage', 'Trade', 'Travel', 'Worship'],
+                emotions: ['Afraid', 'Angry', 'Anxious', 'Calm', 'Confused', 'Curious', 'Desperate', 'Determined', 'Excited', 
+                          'Greedy', 'Happy', 'Hopeful', 'Lonely', 'Proud', 'Sad', 'Secretive', 'Suspicious', 'Tired', 
+                          'Vengeful', 'Worried'],
+                actions: ['Arguing', 'Building', 'Celebrating', 'Destroying', 'Fleeing', 'Guarding', 'Hiding', 'Hunting', 
+                         'Investigating', 'Learning', 'Negotiating', 'Performing', 'Planning', 'Praying', 'Preparing', 
+                         'Repairing', 'Resting', 'Searching', 'Stealing', 'Trading']
+            }
         };
 
         const talentNames = {
@@ -860,23 +878,6 @@
                 </div>
             `;
         }
-                </div>
-            `;
-        }
-
-        function generateQuest() {
-            const questType = tables.questTypes[Math.floor(Math.random() * tables.questTypes.length)];
-            const faction = tables.factions[Math.floor(Math.random() * tables.factions.length)];
-            
-            const questResult = document.getElementById('questResult');
-            questResult.innerHTML = `
-                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
-                    <h3>${questType} Quest</h3>
-                    <p>Related to: ${faction.name}</p>
-                    <p>${generateQuestDescription(questType, faction)}</p>
-                </div>
-            `;
-        }
 
         function generateQuestDescription(type, faction) {
             const descriptions = {
@@ -955,7 +956,7 @@
             }
         }
 
-                    function exploreRoom() {
+        function exploreRoom() {
             const currentRoom = gameData.dungeon.currentRoom;
             if (!currentRoom.explored) {
                 currentRoom.explored = true;
@@ -1220,11 +1221,23 @@
 
         // Initialize when page loads
         window.onload = function() {
-            // Add event listener for failed rolls to advance story clock
-            document.getElementById('diceResult').addEventListener('DOMSubtreeModified', function() {
-                if (this.textContent.includes('Failure') || this.textContent.includes('Disaster')) {
-                    incrementClock();
-                }
+            // Use MutationObserver instead of deprecated DOMSubtreeModified
+            const diceResultElement = document.getElementById('diceResult');
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                        const text = diceResultElement.textContent;
+                        if (text.includes('Failure') || text.includes('Disaster')) {
+                            incrementClock();
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(diceResultElement, {
+                childList: true,
+                characterData: true,
+                subtree: true
             });
             
             // Add event listener for archetype radio buttons

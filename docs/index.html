@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fateweave - Solo RPG</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .game-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .panel {
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        
+        .dice-result {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        
+        #dungeonMap {
+            border: 2px solid #000;
+            background: white;
+        }
+        
+        .character-stat {
+            margin: 10px 0;
+        }
+        
+        .scar {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 5px;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+        
+        .scar.filled {
+            background: #000;
+        }
+        
+        .tabs {
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            display: inline-block;
+            padding: 8px 12px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background: #eee;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .story-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .clock-segment {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #000;
+            margin: 0 2px;
+        }
+        
+        .clock-segment.filled {
+            background: #000;
+        }
+        
+        input[type="text"] {
+            padding: 5px;
+            margin: 5px 0;
+        }
+        
+        #startScreen {
+            text-align: center;
+            max-width: 600px;
+            margin: 40px auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .radio-group {
+            margin: 15px 0;
+            text-align: left;
+        }
+        
+        .radio-option {
+            margin: 8px 0;
+        }
+        
+        .talent-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-left: 25px;
+        }
+        
+        .talent-reminder {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .story-actions {
+            margin-top: 10px;
+        }
+        
+        .delete-btn {
+            padding: 2px 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .small-btn {
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fateweave RPG</h1>
+        
+        <div id="startScreen">
+            <h2>Create Your Character</h2>
+            
+            <div style="margin: 20px 0;">
+                <input type="text" id="characterName" placeholder="Character Name">
+                <button onclick="generateName()">Random Name</button>
+            </div>
+            
+            <div class="radio-group">
+                <h3>Choose Archetype:</h3>
+                <div class="radio-option">
+                    <input type="radio" id="warrior" name="archetype" value="warrior">
+                    <label for="warrior">Warrior - Strong, brave, skilled with weapons</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="mage" name="archetype" value="mage">
+                    <label for="mage">Mage - Wise, magical, understands ancient secrets</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="rogue" name="archetype" value="rogue">
+                    <label for="rogue">Rogue - Quick, clever, good at sneaking and tricks</label>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="wanderer" name="archetype" value="wanderer">
+                    <label for="wanderer">Wanderer - Lucky, adaptable, jack-of-all-trades</label>
+                </div>
+            </div>
+            
+            <div class="radio-group">
+                <h3>Choose Talent:</h3>
+                <div class="radio-option">
+                    <input type="radio" id="secondWind" name="talent" value="secondWind">
+                    <label for="secondWind">Second Wind</label>
+                    <div class="talent-description">Once per scene, avoid defeat</div>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="luckyBreak" name="talent" value="luckyBreak">
+                    <label for="luckyBreak">Lucky Break</label>
+                    <div class="talent-description">Reroll one die per scene</div>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="keenEye" name="talent" value="keenEye">
+                    <label for="keenEye">Keen Eye</label>
+                    <div class="talent-description">Ask one extra question when exploring</div>
+                </div>
+                <div class="radio-option">
+                    <input type="radio" id="ironWill" name="talent" value="ironWill">
+                    <label for="ironWill">Iron Will</label>
+                    <div class="talent-description">Resist one magical effect per scene</div>
+                </div>
+            </div>
+            
+            <button onclick="startGame()">Begin Adventure</button>
+            <p style="margin-top: 20px; color: #666;">Or <a href="#" onclick="loadSavedGame(); return false;">Continue Saved Game</a></p>
+        </div>
+
+        <div id="gameScreen" class="hidden">
+            <div class="game-layout">
+                <!-- Left Panel - Character & Story -->
+                <div class="panel">
+                    <h2>Character</h2>
+                    <div class="character-sheet">
+                        <div class="character-stat">
+                            <strong>Name:</strong> <span id="charName"></span>
+                        </div>
+                        <div class="character-stat">
+                            <strong>Archetype:</strong> <span id="charArchetype"></span>
+                        </div>
+                        <div class="character-stat">
+                            <strong>Talent:</strong> <span id="charTalent"></span>
+                            <div class="talent-reminder" id="talentReminder"></div>
+                        </div>
+                        <div class="character-stat">
+                            <strong>Goal:</strong> <span id="charGoal"></span>
+                        </div>
+                        <div class="character-stat">
+                            <strong>Scars:</strong>
+                            <button class="small-btn" onclick="removeScar()">-</button>
+                            <span id="scars">
+                                <span class="scar"></span>
+                                <span class="scar"></span>
+                                <span class="scar"></span>
+                            </span>
+                            <button class="small-btn" onclick="addScar()">+</button>
+                        </div>
+                    </div>
+
+                    <h3>Story Clock</h3>
+                    <div style="margin-bottom: 20px;">
+                        <button class="small-btn" onclick="decrementClock()">-</button>
+                        <span id="storyClock">
+                            <span class="clock-segment"></span>
+                            <span class="clock-segment"></span>
+                            <span class="clock-segment"></span>
+                            <span class="clock-segment"></span>
+                            <span class="clock-segment"></span>
+                            <span class="clock-segment"></span>
+                        </span>
+                        <button class="small-btn" onclick="incrementClock()">+</button>
+                    </div>
+
+                    <h3>Story Log</h3>
+                    <div id="storyLog" style="max-height: 300px; overflow-y: auto;">
+                    </div>
+                    <div class="story-actions">
+                        <button onclick="clearStoryLog()">Clear Log</button>
+                        <button onclick="undoLastEntry()">Undo Last</button>
+                    </div>
+                </div>
+
+                <!-- Center Panel - All Tabs -->
+                <div class="panel">
+                    <div class="tabs">
+                        <span class="tab active" onclick="switchTab('map')">Map</span>
+                        <span class="tab" onclick="switchTab('actions')">Actions</span>
+                        <span class="tab" onclick="switchTab('oracle')">Oracle</span>
+                        <span class="tab" onclick="switchTab('monsters')">Monsters</span>
+                        <span class="tab" onclick="switchTab('factions')">Factions</span>
+                        <span class="tab" onclick="switchTab('quests')">Quests</span>
+                    </div>
+
+                    <div id="mapTab" class="tab-content active">
+                        <h2>Dungeon Map</h2>
+                        <canvas id="dungeonMap" width="600" height="400"></canvas>
+                        <div style="margin-top: 10px;">
+                            <button onclick="dropRoom()">New Room</button>
+                            <button onclick="exploreRoom()">Explore Current Room</button>
+                            <button onclick="removeLastRoom()">Remove Last Room</button>
+                        </div>
+                    </div>
+
+                    <div id="actionsTab" class="tab-content">
+                        <h2>Actions</h2>
+                        <div style="margin-bottom: 20px;">
+                            <button onclick="rollFateDice()">Roll Fate Dice</button>
+                            <button onclick="combatRoll()">Combat Roll</button>
+                        </div>
+                        <div id="diceResult" class="dice-result"></div>
+                        <div id="actionResult" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div id="oracleTab" class="tab-content">
+                        <h2>Oracle</h2>
+                        <input type="text" id="oracleQuestion" placeholder="Ask a yes/no question">
+                        <button onclick="askOracle()">Ask Oracle</button>
+                        <div id="oracleResult" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div id="monstersTab" class="tab-content">
+                        <h2>Monster Generator</h2>
+                        <button onclick="generateMonster()">Generate Monster</button>
+                        <div id="monsterResult"></div>
+                    </div>
+
+                    <div id="factionsTab" class="tab-content">
+                        <h2>Factions</h2>
+                        <button onclick="generateFaction()">Generate Faction</button>
+                        <div id="factionResult"></div>
+                    </div>
+
+                    <div id="questsTab" class="tab-content">
+                        <h2>Quest Generator</h2>
+                        <button onclick="generateQuest()">Generate Quest</button>
+                        <div id="questResult"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game Data
+        let gameData = {
+            character: {
+                name: '',
+                archetype: '',
+                talent: '',
+                goal: '',
+                scars: 0,
+                position: { x: 300, y: 200 }
+            },
+            dungeon: {
+                rooms: [],
+                currentRoom: null
+            },
+            story: {
+                clockSegments: 0,
+                log: []
+            }
+        };
+
+        // Tables
+        const tables = {
+            names: {
+                first: ['Aldric', 'Brynn', 'Caelum', 'Dara', 'Eirik', 'Fiona', 'Gareth', 'Hilda', 'Ivar', 'Jora', 
+                       'Kael', 'Lyra', 'Magnus', 'Nora', 'Oswin', 'Petra', 'Quinn', 'Rhea', 'Soren', 'Thora'],
+                last: ['Ironheart', 'Stormwind', 'Brightblade', 'Shadowmere', 'Goldleaf', 'Fireborn', 'Frostbeard', 
+                      'Swiftarrow', 'Strongarm', 'Wiseheart', 'Silvertongue', 'Blackwood', 'Redmane', 'Whitestone']
+            },
+            goals: [
+                'Find the lost artifact of their ancestors',
+                'Avenge their fallen family',
+                'Discover the truth about their mysterious past',
+                'Save their village from an ancient curse',
+                'Prove themselves worthy to their order',
+                'Find a cure for a deadly plague',
+                'Recover stolen sacred relics',
+                'Map the unknown territories',
+                'Break free from a magical bond',
+                'Unite the warring clans',
+                'Uncover a conspiracy against the crown',
+                'Master forbidden magic',
+                'Find their missing sibling',
+                'Restore honor to their name',
+                'Prevent an ancient prophecy'
+            ],
+            monsterTypes: ['Beast', 'Humanoid', 'Undead', 'Elemental', 'Aberration', 'Dragon-kin'],
+            monsterTraits: ['Armored', 'Swift', 'Magical', 'Numerous', 'Cunning', 'Terrifying'],
+            monsterQuirks: ['Collect shiny objects', 'Speak in riddles', 'Afraid of specific thing', 
+                           'Serve a master', 'Guard something', 'Seek something'],
+            roomTypes: ['Empty', 'Monster', 'Treasure', 'Trap', 'Hidden Door'],
+            factions: [
+                { name: 'The Iron Crown', goal: 'Expand their tyrannical rule', method: 'Military conquest', resource: 'Vast armies', enemy: 'The Wandering Folk' },
+                { name: 'The Wandering Folk', goal: 'Preserve freedom of movement', method: 'Trade and diplomacy', resource: 'Information network', enemy: 'The Iron Crown' },
+                { name: 'The Cult of Whispers', goal: 'Unlock forbidden magic', method: 'Secret rituals', resource: 'Ancient knowledge', enemy: 'The Star Watchers' },
+                { name: 'The Beast Lords', goal: 'Return nature to dominance', method: 'Shapeshifting infiltration', resource: 'Control over beasts', enemy: 'The Tomb Seekers' },
+                { name: 'The Tomb Seekers', goal: 'Plunder ancient treasures', method: 'Archaeological expeditions', resource: 'Magical artifacts', enemy: 'The Beast Lords' },
+                { name: 'The Star Watchers', goal: 'Prevent prophesied doom', method: 'Celestial observation', resource: 'Prophetic visions', enemy: 'The Cult of Whispers' }
+            ],
+            questTypes: ['Rescue', 'Retrieve', 'Explore', 'Defeat', 'Discover', 'Escort'],
+            oracleResults: [
+                { range: [2, 3], text: 'No, and...' },
+                { range: [4, 5], text: 'No' },
+                { range: [6, 8], text: 'Yes, but...' },
+                { range: [9, 10], text: 'Yes' },
+                { range: [11, 12], text: 'Yes, and...' }
+            ]
+        };
+
+        const talentNames = {
+            'secondWind': 'Second Wind',
+            'luckyBreak': 'Lucky Break',
+            'keenEye': 'Keen Eye',
+            'ironWill': 'Iron Will'
+        };
+
+        const talentDescriptions = {
+            'secondWind': 'Once per scene, avoid defeat',
+            'luckyBreak': 'Reroll one die per scene',
+            'keenEye': 'Ask one extra question when exploring',
+            'ironWill': 'Resist one magical effect per scene'
+        };
+
+        // Canvas setup
+        let canvas, ctx;
+
+        function initCanvas() {
+            canvas = document.getElementById('dungeonMap');
+            ctx = canvas.getContext('2d');
+            
+            // Clear and redraw
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#ddd';
+            for (let x = 0; x < canvas.width; x += 20) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Redraw all rooms
+            gameData.dungeon.rooms.forEach(room => {
+                drawRoom(room);
+            });
+
+            // Add starting room if no rooms exist
+            if (gameData.dungeon.rooms.length === 0) {
+                addRoom(300, 200, 'Start');
+            }
+        }
+
+        function addRoom(x, y, type) {
+            const room = {
+                x: x - 20,
+                y: y - 20,
+                width: 40,
+                height: 40,
+                type: type,
+                explored: false
+            };
+            
+            gameData.dungeon.rooms.push(room);
+            gameData.dungeon.currentRoom = room;
+            drawRoom(room);
+            saveGame();
+        }
+
+        function drawRoom(room) {
+            ctx.fillStyle = room === gameData.dungeon.currentRoom ? '#ddf' : '#fff';
+            ctx.fillRect(room.x, room.y, room.width, room.height);
+            ctx.strokeStyle = room === gameData.dungeon.currentRoom ? '#00f' : '#000';
+            ctx.strokeRect(room.x, room.y, room.width, room.height);
+            
+            ctx.fillStyle = '#000';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(room.type, room.x + room.width/2, room.y + room.height/2);
+        }
+
+        function dropRoom() {
+            // Simulate dropping pencil
+            const currentRoom = gameData.dungeon.currentRoom;
+            const angle = Math.random() * Math.PI * 2;
+            const distance = (Math.random() * 4 + 1) * 40; // 1-5 squares away
+            
+            const newX = currentRoom.x + currentRoom.width/2 + Math.cos(angle) * distance;
+            const newY = currentRoom.y + currentRoom.height/2 + Math.sin(angle) * distance;
+            
+            // Determine room type
+            const roomType = tables.roomTypes[Math.floor(Math.random() * tables.roomTypes.length)];
+            
+            // Draw corridor
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(currentRoom.x + currentRoom.width/2, currentRoom.y + currentRoom.height/2);
+            ctx.lineTo(newX, newY);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+            
+            addRoom(newX, newY, roomType);
+            addStoryEntry(`You discover a new room: ${roomType}`);
+        }
+
+        function removeLastRoom() {
+            if (gameData.dungeon.rooms.length > 1) {
+                gameData.dungeon.rooms.pop();
+                gameData.dungeon.currentRoom = gameData.dungeon.rooms[gameData.dungeon.rooms.length - 1];
+                initCanvas();
+                saveGame();
+            }
+        }
+
+        function rollDice(sides) {
+            return Math.floor(Math.random() * sides) + 1;
+        }
+
+        function rollFateDice() {
+            const die1 = rollDice(6);
+            const die2 = rollDice(6);
+            const total = die1 + die2;
+            
+            let result;
+            if (die1 === 6 || die2 === 6) {
+                result = "Great Success!";
+            } else if (total >= 8) {
+                result = "Success with complication";
+            } else if (total >= 4) {
+                result = "Failure with opportunity";
+            } else {
+                result = "Disaster!";
+            }
+            
+            const diceResult = document.getElementById('diceResult');
+            diceResult.textContent = `${die1} + ${die2} = ${total} - ${result}`;
+            
+            return { die1, die2, total, result };
+        }
+
+        function combatRoll() {
+            const roll = rollFateDice();
+            const actionResult = document.getElementById('actionResult');
+            
+            if (roll.die1 === 6 || roll.die2 === 6) {
+                actionResult.innerHTML = "Enemy defeated instantly!";
+            } else if (roll.total >= 8) {
+                actionResult.innerHTML = "Trade blows - enemy wounded, you take a Scar";
+                addScar();
+            } else if (roll.total >= 4) {
+                actionResult.innerHTML = "You take a Scar but may retreat";
+                addScar();
+            } else {
+                actionResult.innerHTML = "Take 2 Scars or be captured!";
+                addScar();
+                addScar();
+            }
+        }
+
+        function addScar() {
+            if (gameData.character.scars < 3) {
+                gameData.character.scars++;
+                updateScars();
+                saveGame();
+                
+                if (gameData.character.scars === 3) {
+                    addStoryEntry("Your character has fallen! Game Over.");
+                    alert("Your character has fallen! Create a new character to continue.");
+                }
+            }
+        }
+
+        function removeScar() {
+            if (gameData.character.scars > 0) {
+                gameData.character.scars--;
+                updateScars();
+                saveGame();
+            }
+        }
+
+        function updateScars() {
+            const scarElements = document.querySelectorAll('.scar');
+            scarElements.forEach((scar, index) => {
+                if (index < gameData.character.scars) {
+                    scar.classList.add('filled');
+                } else {
+                    scar.classList.remove('filled');
+                }
+            });
+        }
+
+        function incrementClock() {
+            if (gameData.story.clockSegments < 6) {
+                gameData.story.clockSegments++;
+                updateStoryClock();
+                saveGame();
+                
+                if (gameData.story.clockSegments === 6) {
+                    triggerMajorEvent();
+                }
+            }
+        }
+
+        function decrementClock() {
+            if (gameData.story.clockSegments > 0) {
+                gameData.story.clockSegments--;
+                updateStoryClock();
+                saveGame();
+            }
+        }
+
+        function updateStoryClock() {
+            const segments = document.querySelectorAll('.clock-segment');
+            segments.forEach((segment, index) => {
+                if (index < gameData.story.clockSegments) {
+                    segment.classList.add('filled');
+                } else {
+                    segment.classList.remove('filled');
+                }
+            });
+        }
+
+        function triggerMajorEvent() {
+            const events = [
+                "A faction makes a major move!",
+                "A new threat emerges from the shadows!",
+                "An ally calls for urgent help!",
+                "A long-hidden secret is revealed!",
+                "Disaster strikes the region!",
+                "The final confrontation approaches!"
+            ];
+            
+            const event = events[Math.floor(Math.random() * events.length)];
+            addStoryEntry(`MAJOR EVENT: ${event}`);
+            gameData.story.clockSegments = 0;
+            updateStoryClock();
+            saveGame();
+        }
+
+        function generateMonster() {
+            const type = tables.monsterTypes[Math.floor(Math.random() * tables.monsterTypes.length)];
+            const trait = tables.monsterTraits[Math.floor(Math.random() * tables.monsterTraits.length)];
+            const quirk = tables.monsterQuirks[Math.floor(Math.random() * tables.monsterQuirks.length)];
+            
+            const monsterResult = document.getElementById('monsterResult');
+            monsterResult.innerHTML = `
+                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
+                    <h3>${type}</h3>
+                    <p><strong>Trait:</strong> ${trait}</p>
+                    <p><strong>Quirk:</strong> ${quirk}</p>
+                </div>
+            `;
+            
+            addStoryEntry(`Encountered: ${trait} ${type} that ${quirk.toLowerCase()}`);
+        }
+
+        function generateFaction() {
+            const faction = tables.factions[Math.floor(Math.random() * tables.factions.length)];
+            
+            const factionResult = document.getElementById('factionResult');
+            factionResult.innerHTML = `
+                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
+                    <h3>${faction.name}</h3>
+                    <p><strong>Goal:</strong> ${faction.goal}</p>
+                    <p><strong>Method:</strong> ${faction.method}</p>
+                    <p><strong>Resource:</strong> ${faction.resource}</p>
+                    <p><strong>Enemy:</strong> ${faction.enemy}</p>
+                </div>
+            `;
+        }
+
+        function generateQuest() {
+            const questType = tables.questTypes[Math.floor(Math.random() * tables.questTypes.length)];
+            const faction = tables.factions[Math.floor(Math.random() * tables.factions.length)];
+            
+            const questResult = document.getElementById('questResult');
+            questResult.innerHTML = `
+                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
+                    <h3>${questType} Quest</h3>
+                    <p>Related to: ${faction.name}</p>
+                    <p>${generateQuestDescription(questType, faction)}</p>
+                </div>
+            `;
+        }
+
+        function generateQuestDescription(type, faction) {
+            const descriptions = {
+                'Rescue': `Save someone captured by ${faction.name}`,
+                'Retrieve': `Find an artifact important to ${faction.name}`,
+                'Explore': `Map a region controlled by ${faction.name}`,
+                'Defeat': `Stop a plan of ${faction.name}`,
+                'Discover': `Learn the truth about ${faction.name}`,
+                'Escort': `Protect someone from ${faction.name}`
+            };
+            return descriptions[type];
+        }
+
+        function askOracle() {
+            const question = document.getElementById('oracleQuestion').value;
+            if (!question) return;
+            
+            const roll = rollDice(6) + rollDice(6);
+            const result = tables.oracleResults.find(r => roll >= r.range[0] && roll <= r.range[1]);
+            
+            const oracleResult = document.getElementById('oracleResult');
+            oracleResult.innerHTML = `
+                <p><strong>Question:</strong> ${question}</p>
+                <p><strong>Answer:</strong> ${result.text}</p>
+            `;
+            
+            addStoryEntry(`Oracle: "${question}" - ${result.text}`);
+        }
+
+        function addStoryEntry(text, index = null) {
+            if (index !== null) {
+                gameData.story.log.splice(index, 0, text);
+            } else {
+                gameData.story.log.push(text);
+            }
+            updateStoryLog();
+            saveGame();
+        }
+
+        function removeStoryEntry(index) {
+            gameData.story.log.splice(index, 1);
+            updateStoryLog();
+            saveGame();
+        }
+
+        function updateStoryLog() {
+            const storyLog = document.getElementById('storyLog');
+            storyLog.innerHTML = '';
+            
+            gameData.story.log.forEach((entry, index) => {
+                const div = document.createElement('div');
+                div.className = 'story-entry';
+                div.innerHTML = `
+                    <span>${entry}</span>
+                    <button class="delete-btn" onclick="removeStoryEntry(${index})">×</button>
+                `;
+                storyLog.appendChild(div);
+            });
+            
+            storyLog.scrollTop = storyLog.scrollHeight;
+        }
+
+        function clearStoryLog() {
+            if (confirm('Clear all story entries?')) {
+                gameData.story.log = [];
+                updateStoryLog();
+                saveGame();
+            }
+        }
+
+        function undoLastEntry() {
+            if (gameData.story.log.length > 0) {
+                gameData.story.log.pop();
+                updateStoryLog();
+                saveGame();
+            }
+        }
+
+                    function exploreRoom() {
+            const currentRoom = gameData.dungeon.currentRoom;
+            if (!currentRoom.explored) {
+                currentRoom.explored = true;
+                
+                switch (currentRoom.type) {
+                    case 'Monster':
+                        generateMonster();
+                        break;
+                    case 'Treasure':
+                        addStoryEntry("You find valuable treasure!");
+                        break;
+                    case 'Trap':
+                        addStoryEntry("A trap! Roll Fate Dice to avoid it.");
+                        break;
+                    case 'Hidden Door':
+                        addStoryEntry("You discover a hidden door. Where does it lead?");
+                        break;
+                    default:
+                        addStoryEntry("The room is empty and safe to rest.");
+                }
+                saveGame();
+            } else {
+                addStoryEntry("You've already explored this room.");
+            }
+        }
+
+        function generateName() {
+            const firstName = tables.names.first[Math.floor(Math.random() * tables.names.first.length)];
+            const lastName = tables.names.last[Math.floor(Math.random() * tables.names.last.length)];
+            document.getElementById('characterName').value = `${firstName} ${lastName}`;
+        }
+
+        function generateGoal() {
+            return tables.goals[Math.floor(Math.random() * tables.goals.length)];
+        }
+
+        function startGame() {
+            const name = document.getElementById('characterName').value;
+            const archetypeRadio = document.querySelector('input[name="archetype"]:checked');
+            const talentRadio = document.querySelector('input[name="talent"]:checked');
+            
+            if (!name) {
+                alert('Please enter a character name!');
+                return;
+            }
+            
+            if (!archetypeRadio) {
+                alert('Please choose an archetype!');
+                return;
+            }
+            
+            if (!talentRadio) {
+                alert('Please choose a talent!');
+                return;
+            }
+            
+            const archetype = archetypeRadio.value;
+            const talent = talentRadio.value;
+            const goal = generateGoal();
+            
+            gameData.character = {
+                name,
+                archetype,
+                talent,
+                goal,
+                scars: 0,
+                position: { x: 300, y: 200 }
+            };
+            
+            document.getElementById('charName').textContent = name;
+            document.getElementById('charArchetype').textContent = archetype;
+            document.getElementById('charTalent').textContent = talentNames[talent];
+            document.getElementById('talentReminder').textContent = `(${talentDescriptions[talent]})`;
+            document.getElementById('charGoal').textContent = goal;
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            initCanvas();
+            addStoryEntry(`${name} the ${archetype} begins their quest: ${goal}`);
+            saveGame();
+        }
+
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+        }
+
+        // Save and Load functions
+        function saveGame() {
+            localStorage.setItem('fateweaverQuest', JSON.stringify(gameData));
+        }
+
+        function loadGame() {
+            const savedData = localStorage.getItem('fateweaverQuest');
+            if (savedData) {
+                gameData = JSON.parse(savedData);
+                updateUI();
+                initCanvas();
+            }
+        }
+
+        function loadSavedGame() {
+            const savedData = localStorage.getItem('fateweaverQuest');
+            if (savedData) {
+                gameData = JSON.parse(savedData);
+                document.getElementById('startScreen').classList.add('hidden');
+                document.getElementById('gameScreen').classList.remove('hidden');
+                updateUI();
+                initCanvas();
+            } else {
+                alert('No saved game found!');
+            }
+        }
+
+        function updateUI() {
+            // Update character info
+            document.getElementById('charName').textContent = gameData.character.name;
+            document.getElementById('charArchetype').textContent = gameData.character.archetype;
+            document.getElementById('charTalent').textContent = talentNames[gameData.character.talent];
+            document.getElementById('talentReminder').textContent = `(${talentDescriptions[gameData.character.talent]})`;
+            document.getElementById('charGoal').textContent = gameData.character.goal;
+            
+            // Update scars
+            updateScars();
+            
+            // Update story clock
+            updateStoryClock();
+            
+            // Update story log
+            updateStoryLog();
+        }
+
+        // Initialize when page loads
+        window.onload = function() {
+            // Add event listener for failed rolls to advance story clock
+            document.getElementById('diceResult').addEventListener('DOMSubtreeModified', function() {
+                if (this.textContent.includes('Failure') || this.textContent.includes('Disaster')) {
+                    incrementClock();
+                }
+            });
+        };
+    </script>
+</body>
+</html>

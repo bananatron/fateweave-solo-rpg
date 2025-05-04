@@ -7,10 +7,19 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
         
+        .flex {
+            display: flex;
+            align-items: center;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        hr {
+            opacity: 0.4;
         }
         
         body {
@@ -24,7 +33,8 @@
         
         h1, h2, h3 {
             font-weight: 700;
-            margin-bottom: 16px;
+            /* margin-bottom: 16px; */
+            margin: 0;
         }
         
         h1 { font-size: 24px; }
@@ -220,6 +230,7 @@
         }
         
         #journalButton {
+            display: none; /* Hide initially */
             position: fixed;
             bottom: 24px;
             right: 24px;
@@ -280,11 +291,49 @@
             margin: 16px 0;
             background: #f8f8f8;
         }
+        
+        .generator-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+
+            h3 { flex-grow: 1;}
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            padding: 0 4px;
+            cursor: pointer;
+            font-size: 16px;
+            vertical-align: middle;
+            color: #555;
+        }
+        .icon-btn:hover {
+            color: #000;
+        }
     </style>
+
+    <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+    />
+    <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
+    />
 </head>
 <body>
     <div class="container">
-        <h1>Fateweave RPG</h1>
+        <nav class="flex">
+            <h1 style="margin-right: 20px;">Fateweave RPG</h1>
+
+            <a href="index.html" style="margin-right: 20px;">Companion</a>
+            <a href="guide.html" style="margin-right: 20px;">Guide</a>
+        </nav>
         
         <div id="startScreen">
             <h2>Create Your Character</h2>
@@ -349,7 +398,7 @@
         <div id="gameScreen" class="hidden">
             <div class="game-layout">
                 <!-- Left Panel - Character & Story -->
-                <div class="panel">
+                <div class="panel" style="max-width: 470px;">
                     <h2>Character</h2>
                     <div class="character-sheet">
                         <div class="character-stat">
@@ -364,6 +413,7 @@
                         </div>
                         <div class="character-stat">
                             <strong>Goal:</strong> <span id="charGoal"></span>
+                            <button class="icon-btn" onclick="rerollGoal()" title="Reroll Goal"><i class="ph ph-repeat"></i></button>
                         </div>
                         <div class="character-stat">
                             <strong>Scars:</strong>
@@ -403,15 +453,12 @@
                 <!-- Center Panel - All Tabs -->
                 <div class="panel">
                     <div class="tabs">
-                        <span class="tab active" onclick="switchTab('map')">Map</span>
-                        <span class="tab" onclick="switchTab('actions')">Actions</span>
-                        <span class="tab" onclick="switchTab('oracle')">Oracle</span>
-                        <span class="tab" onclick="switchTab('details')">Details</span>
-                        <span class="tab" onclick="switchTab('npc')">NPCs</span>
-                        <span class="tab" onclick="switchTab('monsters')">Monsters</span>
-                        <span class="tab" onclick="switchTab('factions')">Factions</span>
-                        <span class="tab" onclick="switchTab('quests')">Quests</span>
-                        <span class="tab" onclick="switchTab('journal')">Journal</span>
+                        <span class="tab active" onclick="switchTab('map')"><u>M</u>ap</span>
+                        <span class="tab" onclick="switchTab('actions')"><u>A</u>ctions</span>
+                        <span class="tab" onclick="switchTab('oracle')"><u>O</u>racle</span>
+                        <span class="tab" onclick="switchTab('entities')"><u>E</u>ntities</span>
+                        <span class="tab" onclick="switchTab('storyElements')"><u>S</u>tory Elements</span>
+                        <span class="tab" onclick="switchTab('journal')"><u>J</u>ournal</span>
                     </div>
 
                     <div id="mapTab" class="tab-content active">
@@ -439,42 +486,72 @@
                         <input type="text" id="oracleQuestion" placeholder="Ask a yes/no question">
                         <button onclick="askOracle()">Ask Oracle</button>
                         <div id="oracleResult" style="margin-top: 20px;"></div>
+                        
+                        <hr style="margin: 24px 0;">
+                        
+                        <div class="generator-header">
+                            <h3>Major Event</h3>
+                            <button onclick="generateMajorEvent()">Generate Major Event</button>
+                        </div>
+                        <div id="majorEventResult" style="margin-top: 20px;"></div>
                     </div>
 
-                    <div id="detailsTab" class="tab-content">
-                        <h2>Details Generator</h2>
-                        <p>Generate atmospheric details for ambiguous questions like "What's in the room?" or "What are they wearing?"</p>
-                        <button onclick="generateDetail()">Generate Detail</button>
-                        <div id="detailResult" style="margin-top: 20px;"></div>
-                    </div>
-
-                    <div id="npcTab" class="tab-content">
-                        <h2>NPC Generator</h2>
-                        <button onclick="generateNPC()">Generate NPC</button>
+                    <div id="entitiesTab" class="tab-content">
+                        <h2>Entities</h2>
+                        
+                        <hr style="margin: 16px 0;">
+                        <div class="generator-header">
+                            <h3>NPC Generator</h3>
+                            <button onclick="generateNPC()">Generate NPC</button>
+                        </div>
                         <div id="npcResult"></div>
-                    </div>
-
-                    <div id="monstersTab" class="tab-content">
-                        <h2>Monster Generator</h2>
-                        <button onclick="generateMonster()">Generate Monster</button>
+                        
+                        <hr style="margin: 16px 0;">
+                        <div class="generator-header">
+                            <h3>Monster Generator</h3>
+                            <button onclick="generateMonster()">Generate Monster</button>
+                        </div>
                         <div id="monsterResult"></div>
-                    </div>
-
-                    <div id="factionsTab" class="tab-content">
-                        <h2>Factions</h2>
-                        <button onclick="generateFaction()">Generate Faction</button>
+                        
+                        <hr style="margin: 16px 0;">
+                        <div class="generator-header">
+                            <h3>Faction Generator</h3>
+                            <button onclick="generateFaction()">Generate Faction</button>
+                        </div>
                         <div id="factionResult"></div>
                     </div>
+                    
+                    <div id="storyElementsTab" class="tab-content">
+                        <h2>Story Elements</h2>
+                        
+                         <hr style="margin: 16px 0;">
+                        <div class="generator-header">
+                            <h3>Details Generator</h3>
+                            <button onclick="generateDetail()">Generate Detail</button>
+                        </div>
+                        <p>Generate atmospheric details for ambiguous questions like "What's in the room?" or "What are they wearing?"</p>
+                        <div id="detailResult" style="margin-top: 20px;"></div>
 
-                    <div id="questsTab" class="tab-content">
-                        <h2>Quest Generator</h2>
-                        <button onclick="generateQuest()">Generate Quest</button>
+                        <hr style="margin: 16px 0;">
+                        <div class="generator-header">
+                            <h3>Quest Generator</h3>
+                            <button onclick="generateQuest()">Generate Quest</button>
+                        </div>
                         <div id="questResult"></div>
+                        
+                        <hr style="margin: 16px 0;">
+                        <div class="generator-header">
+                             <h3>Major Event</h3>
+                             <button onclick="generateMajorEvent()">Generate Major Event</button>
+                        </div>
+                        <div id="majorEventResult" style="margin-top: 20px;"></div>
                     </div>
 
                     <div id="journalTab" class="tab-content">
-                        <h2>Journal</h2>
-                        <button onclick="openJournalModal()">Add Note</button>
+                        <div class="generator-header">
+                            <h3>Journal</h3>
+                            <button onclick="openJournalModal()"><i class="ph ph-book-open"></i> Add Note</button>
+                        </div>
                         <div id="journalEntries" style="margin-top: 20px;">
                         </div>
                     </div>
@@ -494,7 +571,7 @@
     </div>
 
     <!-- Journal Button -->
-    <button id="journalButton" onclick="openJournalModal()">Journal</button>
+    <button id="journalButton" onclick="openJournalModal()"><i class="ph ph-book-open"></i></button>
 
     <script>
         // Game Data
@@ -834,9 +911,26 @@
             ];
             
             const event = events[Math.floor(Math.random() * events.length)];
-            addStoryEntry(`MAJOR EVENT: ${event}`);
+            addStoryEntry(`MAJOR EVENT (Clock): ${event}`);
             gameData.story.clockSegments = 0;
             updateStoryClock();
+            saveGame();
+        }
+
+        function generateMajorEvent() {
+            const events = [
+                "A faction makes a major move!",
+                "A new threat emerges from the shadows!",
+                "An ally calls for urgent help!",
+                "A long-hidden secret is revealed!",
+                "Disaster strikes the region!",
+                "The final confrontation approaches!"
+            ];
+            
+            const event = events[Math.floor(Math.random() * events.length)];
+            const majorEventResult = document.getElementById('majorEventResult');
+            majorEventResult.innerHTML = `<div class="generated-content"><p>${event}</p></div>`;
+            addStoryEntry(`MAJOR EVENT (Manual): ${event}`);
             saveGame();
         }
 
@@ -1058,6 +1152,7 @@
             
             document.getElementById('startScreen').classList.add('hidden');
             document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('journalButton').style.display = 'block';
             
             initCanvas();
             addStoryEntry(`${name} the ${archetype} begins their quest: ${goal}`);
@@ -1077,11 +1172,11 @@
 
         // Save and Load functions
         function saveGame() {
-            localStorage.setItem('fateweaverQuest', JSON.stringify(gameData));
+            localStorage.setItem('fateweaveRpg', JSON.stringify(gameData));
         }
 
         function loadGame() {
-            const savedData = localStorage.getItem('fateweaverQuest');
+            const savedData = localStorage.getItem('fateweaveRpg');
             if (savedData) {
                 gameData = JSON.parse(savedData);
                 updateUI();
@@ -1090,7 +1185,7 @@
         }
 
         function loadSavedGame() {
-            const savedData = localStorage.getItem('fateweaverQuest');
+            const savedData = localStorage.getItem('fateweaveRpg');
             if (savedData) {
                 gameData = JSON.parse(savedData);
                 document.getElementById('startScreen').classList.add('hidden');
@@ -1170,6 +1265,15 @@
             `;
             
             addStoryEntry(`Met ${firstName} the ${occupation} - ${appearance}, ${trait}, wants ${want.toLowerCase()}`);
+        }
+
+        function rerollGoal() {
+            const oldGoal = gameData.character.goal;
+            const newGoal = generateGoal();
+            gameData.character.goal = newGoal;
+            document.getElementById('charGoal').textContent = newGoal;
+            addStoryEntry(`Rerolled goal from "${oldGoal}" to "${newGoal}"`);
+            saveGame();
         }
 
         // Journal functions
@@ -1271,6 +1375,36 @@
                 }
             };
         };
+
+        // Add keydown listener for tab switching
+        document.addEventListener('keydown', function(event) {
+            // Check if the event target is an input or textarea to avoid conflicts
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            const key = event.key.toLowerCase();
+            switch (key) {
+                case 'm':
+                    switchTab('map');
+                    break;
+                case 'a':
+                    switchTab('actions');
+                    break;
+                case 'o':
+                    switchTab('oracle');
+                    break;
+                case 'e':
+                    switchTab('entities');
+                    break;
+                case 's':
+                    switchTab('storyElements');
+                    break;
+                case 'j':
+                    switchTab('journal');
+                    break;
+            }
+        });
     </script>
 </body>
 </html>

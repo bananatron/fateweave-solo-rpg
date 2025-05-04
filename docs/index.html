@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fateweave - Solo RPG</title>
+    <title>Fateweaver's Quest - Solo RPG</title>
     <style>
         body {
             font-family: sans-serif;
@@ -167,7 +167,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Fateweave RPG</h1>
+        <h1>Fateweaver's Quest</h1>
         
         <div id="startScreen">
             <h2>Create Your Character</h2>
@@ -285,6 +285,7 @@
                         <span class="tab active" onclick="switchTab('map')">Map</span>
                         <span class="tab" onclick="switchTab('actions')">Actions</span>
                         <span class="tab" onclick="switchTab('oracle')">Oracle</span>
+                        <span class="tab" onclick="switchTab('details')">Details</span>
                         <span class="tab" onclick="switchTab('monsters')">Monsters</span>
                         <span class="tab" onclick="switchTab('factions')">Factions</span>
                         <span class="tab" onclick="switchTab('quests')">Quests</span>
@@ -315,6 +316,13 @@
                         <input type="text" id="oracleQuestion" placeholder="Ask a yes/no question">
                         <button onclick="askOracle()">Ask Oracle</button>
                         <div id="oracleResult" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div id="detailsTab" class="tab-content">
+                        <h2>Details Generator</h2>
+                        <p>Generate atmospheric details for ambiguous questions like "What's in the room?" or "What are they wearing?"</p>
+                        <button onclick="generateDetail()">Generate Detail</button>
+                        <div id="detailResult" style="margin-top: 20px;"></div>
                     </div>
 
                     <div id="monstersTab" class="tab-content">
@@ -367,6 +375,24 @@
                        'Kael', 'Lyra', 'Magnus', 'Nora', 'Oswin', 'Petra', 'Quinn', 'Rhea', 'Soren', 'Thora'],
                 last: ['Ironheart', 'Stormwind', 'Brightblade', 'Shadowmere', 'Goldleaf', 'Fireborn', 'Frostbeard', 
                       'Swiftarrow', 'Strongarm', 'Wiseheart', 'Silvertongue', 'Blackwood', 'Redmane', 'Whitestone']
+            },
+            details: {
+                senses: ['Ancient', 'Bloody', 'Burning', 'Damp', 'Dusty', 'Echoing', 'Foggy', 'Glowing', 'Humming', 'Icy', 
+                        'Musty', 'Oily', 'Putrid', 'Rustling', 'Shadowy', 'Silent', 'Smoky', 'Sparkling', 'Whispering', 'Windy'],
+                elements: ['Bones', 'Chains', 'Crystals', 'Feathers', 'Flowers', 'Gears', 'Glass', 'Leaves', 'Metal', 'Moss', 
+                          'Mushrooms', 'Paper', 'Roots', 'Runes', 'Sand', 'Silk', 'Stone', 'Thorns', 'Water', 'Wood'],
+                conditions: ['Abandoned', 'Broken', 'Ceremonial', 'Concealed', 'Corrupted', 'Cursed', 'Decorated', 'Forgotten', 
+                            'Fresh', 'Hidden', 'Locked', 'Magical', 'Moving', 'New', 'Old', 'Overgrown', 'Preserved', 'Rotting', 
+                            'Sacred', 'Valuable'],
+                purposes: ['Battle', 'Celebration', 'Communication', 'Containment', 'Craft', 'Defense', 'Execution', 'Healing', 
+                          'Knowledge', 'Navigation', 'Offering', 'Prison', 'Protection', 'Punishment', 'Rest', 'Ritual', 
+                          'Storage', 'Trade', 'Travel', 'Worship'],
+                emotions: ['Afraid', 'Angry', 'Anxious', 'Calm', 'Confused', 'Curious', 'Desperate', 'Determined', 'Excited', 
+                          'Greedy', 'Happy', 'Hopeful', 'Lonely', 'Proud', 'Sad', 'Secretive', 'Suspicious', 'Tired', 
+                          'Vengeful', 'Worried'],
+                actions: ['Arguing', 'Building', 'Celebrating', 'Destroying', 'Fleeing', 'Guarding', 'Hiding', 'Hunting', 
+                         'Investigating', 'Learning', 'Negotiating', 'Performing', 'Planning', 'Praying', 'Preparing', 
+                         'Repairing', 'Resting', 'Searching', 'Stealing', 'Trading']
             },
             goals: [
                 'Find the lost artifact of their ancestors',
@@ -907,6 +933,33 @@
             
             // Update story log
             updateStoryLog();
+        }
+
+        function generateDetail() {
+            const sense = tables.details.senses[Math.floor(Math.random() * tables.details.senses.length)];
+            const element = tables.details.elements[Math.floor(Math.random() * tables.details.elements.length)];
+            const condition = tables.details.conditions[Math.floor(Math.random() * tables.details.conditions.length)];
+            const purpose = tables.details.purposes[Math.floor(Math.random() * tables.details.purposes.length)];
+            const emotion = tables.details.emotions[Math.floor(Math.random() * tables.details.emotions.length)];
+            const action = tables.details.actions[Math.floor(Math.random() * tables.details.actions.length)];
+            
+            const detailResult = document.getElementById('detailResult');
+            detailResult.innerHTML = `
+                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
+                    <h3>Atmospheric Details</h3>
+                    <p><strong>Sense/Atmosphere:</strong> ${sense}</p>
+                    <p><strong>Physical Element:</strong> ${element}</p>
+                    <p><strong>Condition:</strong> ${condition}</p>
+                    <p><strong>Purpose/Function:</strong> ${purpose}</p>
+                    <p><strong>Emotional Vibe:</strong> ${emotion}</p>
+                    <p><strong>Current Activity:</strong> ${action}</p>
+                </div>
+                <div style="margin-top: 10px; padding: 10px; background: #f5f5f5;">
+                    <em>Interpret these elements together to answer questions about what's in the room, what someone is wearing, what they're thinking, or what's happening in the scene.</em>
+                </div>
+            `;
+            
+            addStoryEntry(`Detail Check: ${sense} ${element} (${condition}) for ${purpose} - feeling ${emotion}, currently ${action}`);
         }
 
         // Initialize when page loads

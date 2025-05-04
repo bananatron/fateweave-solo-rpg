@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fateweaver's Quest - Solo RPG</title>
+    <title>Fateweave - Solo RPG</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
         
@@ -39,16 +39,21 @@
         }
         
         .game-layout {
-            display: grid;
-            grid-template-columns: 320px 1fr;
+            display: flex;
             gap: 24px;
             margin-top: 24px;
+
+            @media only screen and (max-width: 1085px) {
+                flex-wrap: wrap;
+            }
         }
         
         .panel {
             background: white;
             border: 1px solid #e0e0e0;
             padding: 24px;
+            flex-grow: 1;
+            flex-basis: 45%;
         }
         
         button {
@@ -77,6 +82,7 @@
         #dungeonMap {
             border: 2px solid #333;
             background: white;
+            width: 100%;
         }
         
         .character-stat {
@@ -99,6 +105,7 @@
         }
         
         .tabs {
+            display: flex;
             margin-bottom: 24px;
         }
         
@@ -277,7 +284,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Fateweaver's Quest</h1>
+        <h1>Fateweave RPG</h1>
         
         <div id="startScreen">
             <h2>Create Your Character</h2>
@@ -1221,6 +1228,9 @@
 
         // Initialize when page loads
         window.onload = function() {
+            // Generate a name for the character
+            generateName(); 
+
             // Use MutationObserver instead of deprecated DOMSubtreeModified
             const diceResultElement = document.getElementById('diceResult');
             const observer = new MutationObserver(function(mutations) {

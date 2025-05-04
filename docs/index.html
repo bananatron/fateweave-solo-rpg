@@ -163,6 +163,53 @@
             padding: 2px 6px;
             font-size: 12px;
         }
+        
+        #journalButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 5px;
+        }
+        
+        .close {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .journal-entry {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -180,20 +227,24 @@
             <div class="radio-group">
                 <h3>Choose Archetype:</h3>
                 <div class="radio-option">
-                    <input type="radio" id="warrior" name="archetype" value="warrior">
+                    <input type="radio" id="warrior" name="archetype" value="Warrior">
                     <label for="warrior">Warrior - Strong, brave, skilled with weapons</label>
                 </div>
                 <div class="radio-option">
-                    <input type="radio" id="mage" name="archetype" value="mage">
+                    <input type="radio" id="mage" name="archetype" value="Mage">
                     <label for="mage">Mage - Wise, magical, understands ancient secrets</label>
                 </div>
                 <div class="radio-option">
-                    <input type="radio" id="rogue" name="archetype" value="rogue">
+                    <input type="radio" id="rogue" name="archetype" value="Rogue">
                     <label for="rogue">Rogue - Quick, clever, good at sneaking and tricks</label>
                 </div>
                 <div class="radio-option">
-                    <input type="radio" id="wanderer" name="archetype" value="wanderer">
-                    <label for="wanderer">Wanderer - Lucky, adaptable, jack-of-all-trades</label>
+                    <input type="radio" id="custom" name="archetype" value="custom">
+                    <label for="custom">Custom - Create your own archetype</label>
+                </div>
+                <div id="customArchetypeInput" style="display: none; margin-left: 25px; margin-top: 10px;">
+                    <input type="text" id="customArchetype" placeholder="Enter archetype name">
+                    <input type="text" id="customArchetypeDesc" placeholder="What are they good at?" style="width: 300px; margin-top: 5px;">
                 </div>
             </div>
             
@@ -289,6 +340,7 @@
                         <span class="tab" onclick="switchTab('monsters')">Monsters</span>
                         <span class="tab" onclick="switchTab('factions')">Factions</span>
                         <span class="tab" onclick="switchTab('quests')">Quests</span>
+                        <span class="tab" onclick="switchTab('journal')">Journal</span>
                     </div>
 
                     <div id="mapTab" class="tab-content active">
@@ -342,10 +394,30 @@
                         <button onclick="generateQuest()">Generate Quest</button>
                         <div id="questResult"></div>
                     </div>
+
+                    <div id="journalTab" class="tab-content">
+                        <h2>Journal</h2>
+                        <button onclick="openJournalModal()">Add Note</button>
+                        <div id="journalEntries" style="margin-top: 20px;">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Journal Modal -->
+    <div id="journalModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeJournalModal()">&times;</span>
+            <h2>Add Journal Note</h2>
+            <textarea id="journalNote" style="width: 100%; height: 100px; margin: 10px 0;" placeholder="Write your note here..."></textarea>
+            <button onclick="saveJournalNote()">Save Note</button>
+        </div>
+    </div>
+
+    <!-- Journal Button -->
+    <button id="journalButton" onclick="openJournalModal()">Journal</button>
 
     <script>
         // Game Data
@@ -365,7 +437,8 @@
             story: {
                 clockSegments: 0,
                 log: []
-            }
+            },
+            journal: []
         };
 
         // Tables
@@ -852,13 +925,30 @@
                 return;
             }
             
-            const archetype = archetypeRadio.value;
+            let archetype = archetypeRadio.value;
+            let archetypeDesc = '';
+            
+            if (archetype === 'custom') {
+                archetype = document.getElementById('customArchetype').value;
+                archetypeDesc = document.getElementById('customArchetypeDesc').value;
+                
+                if (!archetype) {
+                    alert('Please enter a custom archetype name!');
+                    return;
+                }
+                if (!archetypeDesc) {
+                    alert('Please describe what your archetype is good at!');
+                    return;
+                }
+            }
+            
             const talent = talentRadio.value;
             const goal = generateGoal();
             
             gameData.character = {
                 name,
                 archetype,
+                archetypeDesc,
                 talent,
                 goal,
                 scars: 0,
@@ -962,6 +1052,60 @@
             addStoryEntry(`Detail Check: ${sense} ${element} (${condition}) for ${purpose} - feeling ${emotion}, currently ${action}`);
         }
 
+        // Journal functions
+        function openJournalModal() {
+            document.getElementById('journalModal').style.display = 'block';
+        }
+        
+        function closeJournalModal() {
+            document.getElementById('journalModal').style.display = 'none';
+            document.getElementById('journalNote').value = '';
+        }
+        
+        function saveJournalNote() {
+            const note = document.getElementById('journalNote').value;
+            if (note.trim()) {
+                const timestamp = new Date().toLocaleString();
+                const journalEntry = { timestamp, note };
+                
+                if (!gameData.journal) gameData.journal = [];
+                gameData.journal.push(journalEntry);
+                
+                addStoryEntry(`[Journal] ${note}`);
+                updateJournalDisplay();
+                closeJournalModal();
+                saveGame();
+            }
+        }
+        
+        function updateJournalDisplay() {
+            const journalEntries = document.getElementById('journalEntries');
+            if (!journalEntries) return;
+            
+            journalEntries.innerHTML = '';
+            
+            if (gameData.journal && gameData.journal.length > 0) {
+                gameData.journal.forEach((entry, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'journal-entry';
+                    div.innerHTML = `
+                        <div><strong>${entry.timestamp}</strong></div>
+                        <div>${entry.note}</div>
+                        <button class="delete-btn" onclick="removeJournalEntry(${index})">×</button>
+                    `;
+                    journalEntries.appendChild(div);
+                });
+            } else {
+                journalEntries.innerHTML = '<p>No journal entries yet.</p>';
+            }
+        }
+        
+        function removeJournalEntry(index) {
+            gameData.journal.splice(index, 1);
+            updateJournalDisplay();
+            saveGame();
+        }
+
         // Initialize when page loads
         window.onload = function() {
             // Add event listener for failed rolls to advance story clock
@@ -970,6 +1114,27 @@
                     incrementClock();
                 }
             });
+            
+            // Add event listener for archetype radio buttons
+            const archetypeRadios = document.querySelectorAll('input[name="archetype"]');
+            archetypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const customInput = document.getElementById('customArchetypeInput');
+                    if (this.value === 'custom') {
+                        customInput.style.display = 'block';
+                    } else {
+                        customInput.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                const modal = document.getElementById('journalModal');
+                if (event.target == modal) {
+                    closeJournalModal();
+                }
+            };
         };
     </script>
 </body>

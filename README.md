@@ -1,2 +1,3 @@
-# fateweave-solo-rpg
-The Fateweave Solo RPG
+# Fateweave Solo RPG
+
+An fantasy RPG system toolkit for solo RPG play.

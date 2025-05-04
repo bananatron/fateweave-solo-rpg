@@ -5,11 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fateweaver's Quest - Solo RPG</title>
     <style>
-        body {
-            font-family: sans-serif;
-            margin: 20px;
-            line-height: 1.6;
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+            padding: 24px;
+            background: #f9f9f9;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        h1, h2, h3 {
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        h1 { font-size: 24px; }
+        h2 { font-size: 18px; }
+        h3 { font-size: 16px; }
+        
+        p { margin-bottom: 16px; }
         
         .container {
             max-width: 1200px;
@@ -18,72 +40,90 @@
         
         .game-layout {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 20px;
-            margin-top: 20px;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            margin-top: 24px;
         }
         
         .panel {
-            border: 1px solid #ccc;
-            padding: 20px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 24px;
         }
         
         button {
-            padding: 8px 12px;
-            margin: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            background: #f0f0f0;
+            border: 1px solid #d0d0d0;
+            padding: 8px 16px;
+            margin: 4px;
             cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #e8e8e8;
         }
         
         .dice-result {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px solid #ccc;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 24px 0;
+            padding: 16px;
+            border: 1px solid #d0d0d0;
+            background: #f8f8f8;
         }
         
         #dungeonMap {
-            border: 2px solid #000;
+            border: 2px solid #333;
             background: white;
         }
         
         .character-stat {
-            margin: 10px 0;
+            margin: 12px 0;
+            padding: 8px;
+            background: #f8f8f8;
         }
         
         .scar {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            margin: 0 5px;
-            border: 2px solid #000;
+            width: 16px;
+            height: 16px;
+            margin: 0 4px;
+            border: 2px solid #333;
             border-radius: 50%;
         }
         
         .scar.filled {
-            background: #000;
+            background: #333;
         }
         
         .tabs {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         
         .tab {
             display: inline-block;
-            padding: 8px 12px;
+            padding: 8px 16px;
             cursor: pointer;
-            border: 1px solid #ccc;
-            margin-right: 5px;
+            border: 1px solid #d0d0d0;
+            border-bottom: none;
+            margin-right: 4px;
+            background: #f8f8f8;
         }
         
         .tab.active {
-            background: #eee;
+            background: white;
+            border-bottom: 1px solid white;
+            position: relative;
+            top: 1px;
         }
         
         .tab-content {
             display: none;
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 16px;
+            border: 1px solid #d0d0d0;
+            background: white;
         }
         
         .tab-content.active {
@@ -91,37 +131,43 @@
         }
         
         .story-entry {
-            margin: 5px 0;
-            padding: 5px;
+            margin: 8px 0;
+            padding: 8px;
             border-left: 3px solid #666;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-size: 13px;
         }
         
         .clock-segment {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #000;
+            width: 16px;
+            height: 16px;
+            border: 1px solid #333;
             margin: 0 2px;
         }
         
         .clock-segment.filled {
-            background: #000;
+            background: #333;
         }
         
-        input[type="text"] {
-            padding: 5px;
-            margin: 5px 0;
+        input[type="text"], textarea {
+            font-family: 'JetBrains Mono', monospace;
+            padding: 8px;
+            margin: 8px 0;
+            width: 100%;
+            border: 1px solid #d0d0d0;
+            font-size: 14px;
         }
         
         #startScreen {
             text-align: center;
             max-width: 600px;
             margin: 40px auto;
-            border: 1px solid #ccc;
-            padding: 20px;
+            border: 1px solid #d0d0d0;
+            padding: 32px;
+            background: white;
         }
         
         .hidden {
@@ -129,51 +175,53 @@
         }
         
         .radio-group {
-            margin: 15px 0;
+            margin: 24px 0;
             text-align: left;
         }
         
         .radio-option {
-            margin: 8px 0;
+            margin: 12px 0;
         }
         
         .talent-description {
-            font-size: 0.9em;
+            font-size: 13px;
             color: #666;
-            margin-left: 25px;
+            margin-left: 24px;
         }
         
         .talent-reminder {
-            font-size: 0.9em;
+            font-size: 13px;
             color: #666;
-            margin-top: 5px;
+            margin-top: 4px;
         }
         
         .story-actions {
-            margin-top: 10px;
+            margin-top: 16px;
         }
         
         .delete-btn {
-            padding: 2px 6px;
             font-size: 12px;
+            padding: 2px 6px;
             cursor: pointer;
+            background: #f0f0f0;
+            border: 1px solid #d0d0d0;
         }
         
         .small-btn {
-            padding: 2px 6px;
             font-size: 12px;
+            padding: 2px 6px;
         }
         
         #journalButton {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 10px 15px;
+            bottom: 24px;
+            right: 24px;
+            padding: 8px 16px;
             background: #333;
             color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
         }
         
         .modal {
@@ -191,24 +239,39 @@
             position: relative;
             background: white;
             margin: 50px auto;
-            padding: 20px;
+            padding: 24px;
             width: 80%;
             max-width: 600px;
-            border-radius: 5px;
+            border: 1px solid #d0d0d0;
         }
         
         .close {
             position: absolute;
-            right: 10px;
-            top: 5px;
+            right: 16px;
+            top: 8px;
             font-size: 24px;
             cursor: pointer;
         }
         
         .journal-entry {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px 0;
+            border: 1px solid #d0d0d0;
+            padding: 12px;
+            margin: 12px 0;
+            background: #f8f8f8;
+            position: relative;
+        }
+        
+        .journal-entry .delete-btn {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+        }
+        
+        .generated-content {
+            border: 1px solid #d0d0d0;
+            padding: 16px;
+            margin: 16px 0;
+            background: #f8f8f8;
         }
     </style>
 </head>
@@ -337,6 +400,7 @@
                         <span class="tab" onclick="switchTab('actions')">Actions</span>
                         <span class="tab" onclick="switchTab('oracle')">Oracle</span>
                         <span class="tab" onclick="switchTab('details')">Details</span>
+                        <span class="tab" onclick="switchTab('npc')">NPCs</span>
                         <span class="tab" onclick="switchTab('monsters')">Monsters</span>
                         <span class="tab" onclick="switchTab('factions')">Factions</span>
                         <span class="tab" onclick="switchTab('quests')">Quests</span>
@@ -375,6 +439,12 @@
                         <p>Generate atmospheric details for ambiguous questions like "What's in the room?" or "What are they wearing?"</p>
                         <button onclick="generateDetail()">Generate Detail</button>
                         <div id="detailResult" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div id="npcTab" class="tab-content">
+                        <h2>NPC Generator</h2>
+                        <button onclick="generateNPC()">Generate NPC</button>
+                        <div id="npcResult"></div>
                     </div>
 
                     <div id="monstersTab" class="tab-content">
@@ -449,23 +519,23 @@
                 last: ['Ironheart', 'Stormwind', 'Brightblade', 'Shadowmere', 'Goldleaf', 'Fireborn', 'Frostbeard', 
                       'Swiftarrow', 'Strongarm', 'Wiseheart', 'Silvertongue', 'Blackwood', 'Redmane', 'Whitestone']
             },
-            details: {
-                senses: ['Ancient', 'Bloody', 'Burning', 'Damp', 'Dusty', 'Echoing', 'Foggy', 'Glowing', 'Humming', 'Icy', 
-                        'Musty', 'Oily', 'Putrid', 'Rustling', 'Shadowy', 'Silent', 'Smoky', 'Sparkling', 'Whispering', 'Windy'],
-                elements: ['Bones', 'Chains', 'Crystals', 'Feathers', 'Flowers', 'Gears', 'Glass', 'Leaves', 'Metal', 'Moss', 
-                          'Mushrooms', 'Paper', 'Roots', 'Runes', 'Sand', 'Silk', 'Stone', 'Thorns', 'Water', 'Wood'],
-                conditions: ['Abandoned', 'Broken', 'Ceremonial', 'Concealed', 'Corrupted', 'Cursed', 'Decorated', 'Forgotten', 
-                            'Fresh', 'Hidden', 'Locked', 'Magical', 'Moving', 'New', 'Old', 'Overgrown', 'Preserved', 'Rotting', 
-                            'Sacred', 'Valuable'],
-                purposes: ['Battle', 'Celebration', 'Communication', 'Containment', 'Craft', 'Defense', 'Execution', 'Healing', 
-                          'Knowledge', 'Navigation', 'Offering', 'Prison', 'Protection', 'Punishment', 'Rest', 'Ritual', 
-                          'Storage', 'Trade', 'Travel', 'Worship'],
-                emotions: ['Afraid', 'Angry', 'Anxious', 'Calm', 'Confused', 'Curious', 'Desperate', 'Determined', 'Excited', 
-                          'Greedy', 'Happy', 'Hopeful', 'Lonely', 'Proud', 'Sad', 'Secretive', 'Suspicious', 'Tired', 
-                          'Vengeful', 'Worried'],
-                actions: ['Arguing', 'Building', 'Celebrating', 'Destroying', 'Fleeing', 'Guarding', 'Hiding', 'Hunting', 
-                         'Investigating', 'Learning', 'Negotiating', 'Performing', 'Planning', 'Praying', 'Preparing', 
-                         'Repairing', 'Resting', 'Searching', 'Stealing', 'Trading']
+            npc: {
+                occupations: ['Blacksmith', 'Merchant', 'Guard', 'Farmer', 'Scholar', 'Priest', 'Hunter', 'Thief', 'Noble', 
+                              'Minstrel', 'Healer', 'Sailor', 'Innkeeper', 'Alchemist', 'Scribe', 'Mercenary', 'Beggar', 
+                              'Messenger', 'Craftsman', 'Fisher', 'Mage\'s Apprentice', 'Soldier', 'Baker', 'Gambler'],
+                traits: ['Honest', 'Greedy', 'Suspicious', 'Friendly', 'Nervous', 'Proud', 'Secretive', 'Helpful', 
+                        'Aggressive', 'Curious', 'Tired', 'Cheerful', 'Paranoid', 'Ambitious', 'Lazy', 'Brave', 
+                        'Cowardly', 'Wise', 'Foolish', 'Patient', 'Impatient', 'Loyal', 'Deceptive', 'Generous'],
+                appearances: ['Tall', 'Short', 'Scarred', 'Well-dressed', 'Ragged', 'Muscular', 'Thin', 'Elderly', 
+                             'Young', 'Bearded', 'Clean-shaven', 'Tattooed', 'One-eyed', 'Limping', 'Hooded', 
+                             'Armored', 'Cloaked', 'Dirty', 'Perfumed', 'Pale', 'Tanned', 'Hairy', 'Bald'],
+                wants: ['Money', 'Information', 'Protection', 'Revenge', 'Love', 'Power', 'Escape', 'Food', 
+                       'Medicine', 'Justice', 'Recognition', 'Forgiveness', 'A favor', 'To hide', 'To find someone', 
+                       'To warn you', 'To sell something', 'To buy something', 'Help', 'To make a deal'],
+                secrets: ['Is being followed', 'Knows about treasure', 'Is actually nobility', 'Committed a crime', 
+                         'Has magical abilities', 'Works for the enemy', 'Is dying', 'Owes money', 'Is in love', 
+                         'Knows your past', 'Is a spy', 'Has a cursed item', 'Killed someone', 'Is searching for family', 
+                         'Betrayed someone', 'Has a hidden identity', 'Knows a prophecy', 'Is being blackmailed']
             },
             goals: [
                 'Find the lost artifact of their ancestors',
@@ -752,7 +822,7 @@
             
             const monsterResult = document.getElementById('monsterResult');
             monsterResult.innerHTML = `
-                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
+                <div class="generated-content">
                     <h3>${type}</h3>
                     <p><strong>Trait:</strong> ${trait}</p>
                     <p><strong>Quirk:</strong> ${quirk}</p>
@@ -767,12 +837,29 @@
             
             const factionResult = document.getElementById('factionResult');
             factionResult.innerHTML = `
-                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
+                <div class="generated-content">
                     <h3>${faction.name}</h3>
                     <p><strong>Goal:</strong> ${faction.goal}</p>
                     <p><strong>Method:</strong> ${faction.method}</p>
                     <p><strong>Resource:</strong> ${faction.resource}</p>
                     <p><strong>Enemy:</strong> ${faction.enemy}</p>
+                </div>
+            `;
+        }
+
+        function generateQuest() {
+            const questType = tables.questTypes[Math.floor(Math.random() * tables.questTypes.length)];
+            const faction = tables.factions[Math.floor(Math.random() * tables.factions.length)];
+            
+            const questResult = document.getElementById('questResult');
+            questResult.innerHTML = `
+                <div class="generated-content">
+                    <h3>${questType} Quest</h3>
+                    <p>Related to: ${faction.name}</p>
+                    <p>${generateQuestDescription(questType, faction)}</p>
+                </div>
+            `;
+        }
                 </div>
             `;
         }
@@ -1023,6 +1110,9 @@
             
             // Update story log
             updateStoryLog();
+            
+            // Update journal
+            updateJournalDisplay();
         }
 
         function generateDetail() {
@@ -1035,7 +1125,7 @@
             
             const detailResult = document.getElementById('detailResult');
             detailResult.innerHTML = `
-                <div style="border: 1px solid #000; padding: 10px; margin: 10px 0;">
+                <div class="generated-content">
                     <h3>Atmospheric Details</h3>
                     <p><strong>Sense/Atmosphere:</strong> ${sense}</p>
                     <p><strong>Physical Element:</strong> ${element}</p>
@@ -1050,6 +1140,28 @@
             `;
             
             addStoryEntry(`Detail Check: ${sense} ${element} (${condition}) for ${purpose} - feeling ${emotion}, currently ${action}`);
+        }
+        
+        function generateNPC() {
+            const firstName = tables.names.first[Math.floor(Math.random() * tables.names.first.length)];
+            const occupation = tables.npc.occupations[Math.floor(Math.random() * tables.npc.occupations.length)];
+            const trait = tables.npc.traits[Math.floor(Math.random() * tables.npc.traits.length)];
+            const appearance = tables.npc.appearances[Math.floor(Math.random() * tables.npc.appearances.length)];
+            const want = tables.npc.wants[Math.floor(Math.random() * tables.npc.wants.length)];
+            const secret = tables.npc.secrets[Math.floor(Math.random() * tables.npc.secrets.length)];
+            
+            const npcResult = document.getElementById('npcResult');
+            npcResult.innerHTML = `
+                <div class="generated-content">
+                    <h3>${firstName} the ${occupation}</h3>
+                    <p><strong>Appearance:</strong> ${appearance}</p>
+                    <p><strong>Personality:</strong> ${trait}</p>
+                    <p><strong>Wants:</strong> ${want}</p>
+                    <p><strong>Secret:</strong> ${secret}</p>
+                </div>
+            `;
+            
+            addStoryEntry(`Met ${firstName} the ${occupation} - ${appearance}, ${trait}, wants ${want.toLowerCase()}`);
         }
 
         // Journal functions
